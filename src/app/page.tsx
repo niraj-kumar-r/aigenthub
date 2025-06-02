@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
+/**
+ * Renders the main authentication page, allowing users to register or sign in.
+ *
+ * Displays a registration form for new users when no session is present, or a welcome message and sign-out option for authenticated users.
+ */
 export default function Home() {
     const { data: session } = authClient.useSession();
 
