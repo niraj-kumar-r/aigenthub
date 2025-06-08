@@ -1,9 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { OctagonAlertIcon } from "lucide-react";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { OctagonAlertIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -17,8 +21,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
     email: z.string().email("Invalid email address"),
@@ -26,6 +29,31 @@ const formSchema = z.object({
 });
 
 export const SignInView = () => {
+    const router = useRouter();
+    const [error, setError] = useState<string | null>(null);
+    const [pending, setPending] = useState(false);
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        setError(null);
+        setPending(true);
+        authClient.signIn.email(
+            {
+                email: data.email,
+                password: data.password,
+            },
+            {
+                onError: ({ error }) => {
+                    setPending(false);
+                    setError(error.message);
+                },
+                onSuccess: () => {
+                    setPending(false);
+                    router.push("/");
+                },
+            }
+        );
+    };
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -38,7 +66,10 @@ export const SignInView = () => {
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0 md:grid-cols-2">
                     <Form {...form}>
-                        <form className="p-6 md:p-8">
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="p-6 md:p-8"
+                        >
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col items-center text-center">
                                     <h1 className="text-2xl font-bold">
@@ -89,14 +120,18 @@ export const SignInView = () => {
                                     />
                                 </div>
 
-                                {true && (
+                                {!!error && (
                                     <Alert className="bg-destructive/10 border-none">
                                         <OctagonAlertIcon className="h-4 w-4 !text-destructive" />
-                                        <AlertTitle>Error</AlertTitle>
+                                        <AlertTitle>{error}</AlertTitle>
                                     </Alert>
                                 )}
 
-                                <Button type="submit" className="w-full">
+                                <Button
+                                    type="submit"
+                                    disabled={pending}
+                                    className="w-full"
+                                >
                                     Sign In
                                 </Button>
 
@@ -111,6 +146,7 @@ export const SignInView = () => {
                                         variant="outline"
                                         className="w-full"
                                         type="button"
+                                        disabled={pending}
                                     >
                                         Google
                                     </Button>
@@ -118,6 +154,7 @@ export const SignInView = () => {
                                         variant="outline"
                                         className="w-full"
                                         type="button"
+                                        disabled={pending}
                                     >
                                         GitHub
                                     </Button>
@@ -136,7 +173,7 @@ export const SignInView = () => {
                         </form>
                     </Form>
 
-                    <div className="bg-radial from-green-700 to-green-900 relative md:flex flex-col gay-y-4 items-center justify-center">
+                    <div className="bg-radial from-green-700 to-green-900 relative hidden md:flex flex-col gap-y-4 items-center justify-center">
                         <Image
                             height={92}
                             width={92}
