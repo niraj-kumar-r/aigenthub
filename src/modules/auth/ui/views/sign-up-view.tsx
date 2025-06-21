@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { OctagonAlertIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,7 +35,6 @@ const formSchema = z
     });
 
 export const SignUpView = () => {
-    const router = useRouter();
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -48,6 +46,7 @@ export const SignUpView = () => {
                 name: data.name,
                 email: data.email,
                 password: data.password,
+                callbackURL: "/",
             },
             {
                 onError: ({ error }) => {
@@ -56,7 +55,26 @@ export const SignUpView = () => {
                 },
                 onSuccess: () => {
                     setPending(false);
-                    router.push("/");
+                },
+            }
+        );
+    };
+
+    const onSocial = (provider: "google" | "github") => {
+        setError(null);
+        setPending(true);
+        authClient.signIn.social(
+            {
+                provider,
+                callbackURL: "/",
+            },
+            {
+                onError: ({ error }) => {
+                    setPending(false);
+                    setError(error.message);
+                },
+                onSuccess: () => {
+                    setPending(false);
                 },
             }
         );
@@ -199,6 +217,7 @@ export const SignUpView = () => {
                                         className="w-full"
                                         type="button"
                                         disabled={pending}
+                                        onClick={() => onSocial("google")}
                                     >
                                         Google
                                     </Button>
@@ -207,6 +226,7 @@ export const SignUpView = () => {
                                         className="w-full"
                                         type="button"
                                         disabled={pending}
+                                        onClick={() => onSocial("github")}
                                     >
                                         GitHub
                                     </Button>
