@@ -222,6 +222,7 @@ export const SignUpView = () => {
                                         type="button"
                                         disabled={pending}
                                         onClick={() => onSocial("google")}
+                                        aria-label="Continue with Google"
                                     >
                                         <FaGoogle />
                                     </Button>
