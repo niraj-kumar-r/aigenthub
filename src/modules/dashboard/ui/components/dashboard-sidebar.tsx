@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarHeader,
@@ -17,6 +18,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { DashboardUserButton } from "./dashboard-user-button";
 
 const firstSection = [
     {
@@ -118,6 +120,10 @@ export const DashboardSidebar = () => {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+
+            <SidebarFooter className="text-white">
+                <DashboardUserButton />
+            </SidebarFooter>
         </Sidebar>
     );
 };
