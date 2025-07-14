@@ -23,6 +23,7 @@ const Agents = async () => {
 
     const queryClient = getQueryClient();
     void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions({}));
+    // NOTE: How do we access the query options here from the hook from client side?
 
     return (
         <>

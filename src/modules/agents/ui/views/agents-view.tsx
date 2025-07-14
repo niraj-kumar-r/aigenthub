@@ -5,12 +5,18 @@ import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAgentsFilters } from "../../hooks/use-agents-filters";
 import { columns } from "../components/columns";
 import { DataTable } from "../components/data-table";
 
 export const AgentsView = () => {
+    const [filters] = useAgentsFilters();
     const trpc = useTRPC();
-    const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions({}));
+    const { data } = useSuspenseQuery(
+        trpc.agents.getMany.queryOptions({
+            ...filters,
+        })
+    );
 
     // NOTE: The data should be prefetched in the ssr component with same query options
     // This is because when switching to useQuery from useSuspenseQuery (when query options dont match)
