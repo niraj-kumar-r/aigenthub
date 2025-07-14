@@ -8,7 +8,6 @@ import { db } from "@/db";
 import { agents } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { and, count, desc, eq, getTableColumns, ilike, sql } from "drizzle-orm";
-import { Search } from "lucide-react";
 import { z } from "zod";
 import { agentsInsertSchema } from "../schemas";
 
@@ -45,7 +44,7 @@ export const agentsRouter = createTRPCRouter({
                 .limit(pageSize)
                 .offset(pageSize * (page - 1));
 
-            const total = await db
+            const [total] = await db
                 .select({ count: count() })
                 .from(agents)
                 .where(
@@ -54,7 +53,14 @@ export const agentsRouter = createTRPCRouter({
                         search ? ilike(agents.name, `%${search}%`) : undefined
                     )
                 );
-            return data;
+
+            const totalPages = Math.ceil(total.count / pageSize);
+
+            return {
+                items: data,
+                totalCount: total.count,
+                totalPages,
+            };
         }),
 
     getOne: protectedProcedure
