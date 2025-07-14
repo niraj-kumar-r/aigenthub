@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { useTRPC } from "@/trpc/client";
@@ -18,6 +19,12 @@ export const AgentsView = () => {
                 data={data.map((e) => ({ ...e, meetingCount: 5 }))}
                 columns={columns}
             />
+            {data.length === 0 && (
+                <EmptyState
+                    title="Create your first agent"
+                    description="Create an agent to join your meetings and assist you. Each agent will follow your instructions and can be customized to suit your needs."
+                />
+            )}
         </div>
     );
 };
