@@ -7,10 +7,11 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAgentsFilters } from "../../hooks/use-agents-filters";
 import { columns } from "../components/columns";
+import { DataPagination } from "../components/data-pagination";
 import { DataTable } from "../components/data-table";
 
 export const AgentsView = () => {
-    const [filters] = useAgentsFilters();
+    const [filters, setFilters] = useAgentsFilters();
     const trpc = useTRPC();
     const { data } = useSuspenseQuery(
         trpc.agents.getMany.queryOptions({
@@ -25,6 +26,11 @@ export const AgentsView = () => {
     return (
         <div className="flex flex-col flex-1 pb-4 px-4 md:px-8 gap-y-4">
             <DataTable data={data.items} columns={columns} />
+            <DataPagination
+                page={filters.page}
+                totalPages={data.totalPages}
+                onPageChange={(page) => setFilters({ page })}
+            />
             {data.items.length === 0 && (
                 <EmptyState
                     title="Create your first agent"
