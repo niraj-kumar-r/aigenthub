@@ -22,7 +22,7 @@ const Agents = async () => {
     }
 
     const queryClient = getQueryClient();
-    void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions());
+    void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions({}));
 
     return (
         <>

@@ -10,7 +10,7 @@ import { DataTable } from "../components/data-table";
 
 export const AgentsView = () => {
     const trpc = useTRPC();
-    const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
+    const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions({}));
 
     return (
         <div className="flex flex-col flex-1 pb-4 px-4 md:px-8 gap-y-4">
