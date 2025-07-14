@@ -5,21 +5,33 @@ import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAgentsFilters } from "../../hooks/use-agents-filters";
 import { columns } from "../components/columns";
+import { DataPagination } from "../components/data-pagination";
 import { DataTable } from "../components/data-table";
 
 export const AgentsView = () => {
+    const [filters, setFilters] = useAgentsFilters();
     const trpc = useTRPC();
-    const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
+    const { data } = useSuspenseQuery(
+        trpc.agents.getMany.queryOptions({
+            ...filters,
+        })
+    );
+
+    // NOTE: The data should be prefetched in the ssr component with same query options
+    // This is because when switching to useQuery from useSuspenseQuery (when query options dont match)
+    // the headers won't be passed, and we will loose the authentication context
 
     return (
         <div className="flex flex-col flex-1 pb-4 px-4 md:px-8 gap-y-4">
-            {/* TODO: Remove the extra mock data for meeting count */}
-            <DataTable
-                data={data.map((e) => ({ ...e, meetingCount: 5 }))}
-                columns={columns}
+            <DataTable data={data.items} columns={columns} />
+            <DataPagination
+                page={filters.page}
+                totalPages={data.totalPages}
+                onPageChange={(page) => setFilters({ page })}
             />
-            {data.length === 0 && (
+            {data.items.length === 0 && (
                 <EmptyState
                     title="Create your first agent"
                     description="Create an agent to join your meetings and assist you. Each agent will follow your instructions and can be customized to suit your needs."
