@@ -14,11 +14,7 @@ export const AgentsView = () => {
 
     return (
         <div className="flex flex-col flex-1 pb-4 px-4 md:px-8 gap-y-4">
-            {/* TODO: Remove the extra mock data for meeting count */}
-            <DataTable
-                data={data.map((e) => ({ ...e, meetingCount: 5 }))}
-                columns={columns}
-            />
+            <DataTable data={data} columns={columns} />
             {data.length === 0 && (
                 <EmptyState
                     title="Create your first agent"
