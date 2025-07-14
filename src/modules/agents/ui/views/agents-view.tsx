@@ -27,7 +27,7 @@ export const AgentsView = () => {
     const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
 
     return (
-        <div>
+        <div className="flex flex-col flex-1 pb-4 px-4 md:px-8 gap-y-4">
             <DataTable data={mockData} columns={columns} />
         </div>
     );
