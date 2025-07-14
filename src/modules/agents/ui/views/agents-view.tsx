@@ -12,6 +12,10 @@ export const AgentsView = () => {
     const trpc = useTRPC();
     const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions({}));
 
+    // NOTE: The data should be prefetched in the ssr component with same query options
+    // This is because when switching to useQuery from useSuspenseQuery (when query options dont match)
+    // the headers won't be passed, and we will loose the authentication context
+
     return (
         <div className="flex flex-col flex-1 pb-4 px-4 md:px-8 gap-y-4">
             <DataTable data={data.items} columns={columns} />
