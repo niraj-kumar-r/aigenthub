@@ -4,23 +4,8 @@ import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { columns, Payment } from "../components/columns";
+import { columns } from "../components/columns";
 import { DataTable } from "../components/data-table";
-
-const mockData: Payment[] = [
-    {
-        id: "728ed52f",
-        amount: 100,
-        status: "pending",
-        email: "m@example.com",
-    },
-    {
-        id: "b3c1f4a2",
-        amount: 200,
-        status: "processing",
-        email: "john@john.com",
-    },
-];
 
 export const AgentsView = () => {
     const trpc = useTRPC();
@@ -28,7 +13,11 @@ export const AgentsView = () => {
 
     return (
         <div className="flex flex-col flex-1 pb-4 px-4 md:px-8 gap-y-4">
-            <DataTable data={mockData} columns={columns} />
+            {/* TODO: Remove the extra mock data for meeting count */}
+            <DataTable
+                data={data.map((e) => ({ ...e, meetingCount: 5 }))}
+                columns={columns}
+            />
         </div>
     );
 };
